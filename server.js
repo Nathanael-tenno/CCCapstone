@@ -30,10 +30,12 @@ app.post('/upload', upload.single('image'), async (req, res) => {
     return res.status(400).json({ error: 'No file uploaded' });
   }
 
-  try {
+ try {
     const bucket = admin.storage().bucket();
-    const uniqueFilename = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const currentDate = new Date().toISOString().replace(/[-:.]/g, '');
+    const uniqueFilename = currentDate + '-' + req.file.originalname;
     const fileUpload = bucket.file(uniqueFilename);
+    const filePath = `${uniqueFilename}`;
 
     // Create a write stream to write the file data to Firebase Storage
     const stream = fileUpload.createWriteStream({
